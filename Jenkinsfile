@@ -21,9 +21,8 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
-                    bat "docker push afif729/lms-portal:latest"
+                withDockerRegistry(credentialsId: 'dockerhub', toolName: 'default') {
+                bat "docker push afif729/lms-portal:latest"
                 }
             }
         }
