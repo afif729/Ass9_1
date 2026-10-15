@@ -21,21 +21,16 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
-                        app.push("${TAG}")
-                        app.push("latest")
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
+                bat "docker push afif729/lms-portal:3"
+                bat "docker push afif729/lms-portal:latest"
                 }
             }
         }
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    // Apply Kubernetes deployment with version tag update
-                    sh "sed -i 's|image:.*|image: ${IMAGE_NAME}:${TAG}|g' deployment.yaml"
-                    sh "kubectl apply -f deployment.yaml"
-                }
+                bat "kubectl apply -f deployment.yaml"
             }
         }
         stage('Health Check & Rollback Verification') {
