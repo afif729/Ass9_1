@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: lms-portal
-        image: your-dockerhub-username/lms-portal:latest
+        image: afif729/lms-portal:latest
         ports:
         - containerPort: 80
         readinessProbe:
