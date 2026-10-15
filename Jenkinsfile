@@ -21,8 +21,8 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry(credentialsId: 'dockerhub', toolName: 'default') {
-                bat "docker push afif729/lms-portal:latest"
+                withDockerRegistry(credentialsId: 'dockerhub') {
+                    bat "docker push afif729/lms-portal:latest"
                 }
             }
         }
