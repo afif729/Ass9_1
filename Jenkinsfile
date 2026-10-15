@@ -20,12 +20,13 @@ pipeline {
             }
         }
         stage('Push to Docker Hub') {
-            steps {
-                withDockerRegistry(credentialsId: 'dockerhub') {
-                    bat "docker push afif729/lms-portal:latest"
-                }
-            }
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            bat "powershell -Command \"$pass = '%DOCKER_PASS%'; $user = '%DOCKER_USER%'; $sec = ConvertTo-SecureString $pass -AsPlainText -Force; $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($sec); $Plain = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR); & docker login -u $user --password-string $Plain\""
+            bat "docker push afif729/lms-portal:latest"
         }
+    }
+}
         stage('Deploy to Kubernetes') {
             steps {
                 bat "kubectl apply -f deployment.yaml"
