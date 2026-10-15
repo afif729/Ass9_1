@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_CREDS = credentials('dockerhub-credentials-id')
+        DOCKER_CREDS = credentials('dockerhub')
         IMAGE_NAME = 'afif729/lms-portal'
         TAG = "${env.BUILD_NUMBER}"
     }
@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                 bat "echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin"
                 bat "docker push afif729/lms-portal:3"
                 bat "docker push afif729/lms-portal:latest"
